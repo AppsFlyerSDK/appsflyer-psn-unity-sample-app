@@ -8,10 +8,11 @@ public class AppsflyerScript : MonoBehaviour
 {
     public string DEV_KEY;
     public string APP_ID;
+    public bool SandboxMode = false;
 
     void Start()
     {
-        AppsflyerModule afm = new AppsflyerModule(DEV_KEY, APP_ID, this);
+        AppsflyerModule afm = new AppsflyerModule(DEV_KEY, APP_ID, this, SandboxMode);
         afm.Start();
 
         // set event name

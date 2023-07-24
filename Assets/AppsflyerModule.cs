@@ -39,7 +39,7 @@ public class AppsflyerModule
             PlayerPrefs.SetString("af_device_id", af_device_id);
         }
 
-        Debug.Log("af_device_id: " + af_device_id);
+        // Debug.Log("af_device_id: " + af_device_id);
     }
 
     private RequestData CreateRequestData()
@@ -48,7 +48,29 @@ public class AppsflyerModule
         DeviceIDs deviceid = new DeviceIDs { type = "custom", value = af_device_id };
         DeviceIDs[] deviceids = { deviceid };
 
+        // adding psn id
+        string psn_uid = ""; // TODO: add psn uid
+        DeviceIDs psid = new DeviceIDs { type = "psid", value = psn_uid };
+        deviceids.Append(psid);
+
         string device_os_ver = SystemInfo.operatingSystem;
+        device_os_ver = TrimDevice_os_ver(device_os_ver);
+
+        RequestData req = new RequestData
+        {
+            timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString(),
+            device_os_version = device_os_ver,
+            device_model = SystemInfo.deviceModel,
+            app_version = "1.0.0", //TODO: Insert your app version
+            device_ids = deviceids,
+            request_id = GenerateGuid(),
+            limit_ad_tracking = false
+        };
+        return req;
+    }
+
+    private static string TrimDevice_os_ver(string device_os_ver)
+    {
         if (device_os_ver.IndexOf(" (") > -1)
             device_os_ver = device_os_ver.Replace(" (", "");
         if (device_os_ver.IndexOf("(") > -1)
@@ -64,18 +86,7 @@ public class AppsflyerModule
             device_os_ver = device_os_ver.Substring(1, device_os_ver.Length - 1);
         if (device_os_ver.Length > 23)
             device_os_ver = device_os_ver.Substring(0, 23);
-
-        RequestData req = new RequestData
-        {
-            timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString(),
-            device_os_version = device_os_ver,
-            device_model = SystemInfo.deviceModel,
-            app_version = "1.0.0", //TODO: Insert your app version
-            device_ids = deviceids,
-            request_id = GenerateGuid(),
-            limit_ad_tracking = false
-        };
-        return req;
+        return device_os_ver;
     }
 
     // report first open event to AppsFlyer (or session if counter > 2)
@@ -154,19 +165,20 @@ public class AppsflyerModule
         {
             case AppsflyerRequestType.FIRST_OPEN_REQUEST:
                 url = isSandbox
-                    ? "https://sandbox-events.appsflyer.com/v1.0/c2s/first_open/app/nativepc/"
+                    ? "https://sandbox-events.appsflyer.com/v1.0/c2s/first_open/app/playstation/"
                         + appid
-                    : "https://events.appsflyer.com/v1.0/c2s/first_open/app/nativepc/" + appid;
+                    : "https://events.appsflyer.com/v1.0/c2s/first_open/app/playstation/" + appid;
                 break;
             case AppsflyerRequestType.SESSION_REQUEST:
                 url = isSandbox
-                    ? "https://sandbox-events.appsflyer.com/v1.0/c2s/session/app/nativepc/" + appid
-                    : "https://events.appsflyer.com/v1.0/c2s/session/app/nativepc/" + appid;
+                    ? "https://sandbox-events.appsflyer.com/v1.0/c2s/session/app/playstation/"
+                        + appid
+                    : "https://events.appsflyer.com/v1.0/c2s/session/app/playstation/" + appid;
                 break;
             case AppsflyerRequestType.INAPP_EVENT_REQUEST:
                 url = isSandbox
-                    ? "https://sandbox-events.appsflyer.com/v1.0/c2s/inapp/app/nativepc/" + appid
-                    : "https://events.appsflyer.com/v1.0/c2s/inapp/app/nativepc/" + appid;
+                    ? "https://sandbox-events.appsflyer.com/v1.0/c2s/inapp/app/playstation/" + appid
+                    : "https://events.appsflyer.com/v1.0/c2s/inapp/app/playstation/" + appid;
                 break;
             default:
                 url = null;
