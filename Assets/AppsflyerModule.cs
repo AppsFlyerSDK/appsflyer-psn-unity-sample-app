@@ -197,7 +197,7 @@ public class AppsflyerModule
         uwr.SetRequestHeader("Authorization", auth);
         uwr.SetRequestHeader(
             "user-agent",
-            "UnityGamesLaucnher/"
+            "UnityPlaystation/"
                 + " ("
                 + SystemInfo.operatingSystem.Replace("(", "").Replace(")", "")
                 + ")"
